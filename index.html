@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Neopixel Server</title>
+
+        <!-- Babel CDN (for JSX support) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js" integrity="sha512-kp7YHLxuJDJcOzStgd6vtpxr4ZU9kjn77e6dBsivSz+pUuAuMlE2UTdKB7jjsWT84qbS8kdCWHPETnP/ctrFsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <!-- React CDN -->
+        <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+        <!-- iro.js color picker CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+
+        <style>
+            body {
+                background: #F3F4ED;
+            }
+            .container {
+                padding-top: 100px;
+                display: flex;
+                flex-direction: column;
+                max-width: 400px;
+                margin: 0 auto;
+                align-items: center;
+            }
+            h1 {
+                font-family: sans-serif;
+                opacity: 0.8;
+            }
+            #color-picker {
+                max-height: 400px;
+                overflow: hidden;
+            }
+
+            /** button styles from: https://codepen.io/andreas_pihl/pen/WZLaod */
+            .button {
+                transform: scale(0.25) translateY(-100%);
+                margin: 0 auto;
+                width: 245px;
+                height: 245px;
+                border-radius: 60px;
+                position: relative;
+                background: rgba(202,205,201,1);
+                background: -moz-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(202,205,201,1)), color-stop(100%, rgba(255,255,255,1)));
+                background: -webkit-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -o-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -ms-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                box-shadow: -16px 13px 16px rgba(0,0,0,0.4);
+            }
+            .buttonFace{
+                width: 237px;
+                height: 237px;
+                border-radius: 60px;
+                position: absolute;
+                margin: 3px 3px 5px 5px;
+                background: rgba(255,255,255,1);
+                background: -moz-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(213,216,212,1)));
+                background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -o-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -ms-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+            }
+            .circle:before {
+                content: "";
+                width: 150px;
+                left: 0;
+                top: 0;
+                height: 150px;
+                border-radius: 50%;
+                position: absolute;
+                margin: 2px;
+                background: rgba(255,255,255,1);
+                background: -moz-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(213,216,212,1)));
+                background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -o-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: -ms-linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+                background: linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(213,216,212,1) 100%);
+            }
+            .circle {
+                left: calc(50% - 75px);
+                top: calc(50% - 75px);
+                width: 155px;
+                height: 155px;
+                border: none;
+                border-radius: 50%;
+                position: relative;
+                background: rgba(202,205,201,1);
+                background: -moz-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(202,205,201,1)), color-stop(100%, rgba(255,255,255,1)));
+                background: -webkit-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -o-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: -ms-linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                background: linear-gradient(45deg, rgba(202,205,201,1) 0%, rgba(255,255,255,1) 100%);
+                box-shadow:
+                -2px 2px 1px #A2A5A2,
+                -4px 4px 1px #A6A9A6,
+                -6px 6px 1px #ABAEAB,
+                -8px 8px 1px #B0B3B0,
+                -10px 10px 1px #B5B7B5,
+                -12px 12px 1px #BABCBA,
+                -14px 14px 1px #BFC1BF,
+                -16px 16px 1px #C4C6C4,
+                -18px 18px 1px #C9CAC9,
+                -20px 20px 1px #CECFCE,
+                -22px 22px 1px #D2D4D2,
+                -24px 24px 1px #D7D9D7,
+                -26px 26px 1px #DCDDDC,
+                -28px 28px 1px #E1E2E1,
+                -30px 30px 1px #E6E7E6,
+                -32px 32px 1px #EBECEB,
+                -34px 34px 1px #F0F0F0
+                ;
+                transition:all .3s ease;
+            }
+            .circle:focus {
+                outline:none;
+            }
+            .circle:active {
+                transform:scale(.96);
+                box-shadow:0px 0px 20px 5px #89cff0;
+            }
+            .circle:active:after {
+                background-color:#89cff0;
+                box-shadow:0px 0px 20px 1px #89cff0;
+            }
+            .circle:after {
+                content:"";
+                width:30px;
+                left:calc(50% - 15px);
+                top:calc(50% - 15px);
+                height:30px;
+                border-radius:50%;
+                position:absolute;
+                background-color:#C4C6C4;
+                transition:all .3s ease;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app"></div>
+
+        <script src="app.js" type="text/babel"></script>
+    </body>
+</html>
