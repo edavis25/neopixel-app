@@ -31,3 +31,8 @@ ExecStart=/usr/bin/python3 /home/pi/neopixel-app/server.py
 [Install]
 WantedBy=multi-user.target
 ```
+
+
+
+
+![color picker](https://user-images.githubusercontent.com/14096584/159421904-a9145640-96ff-4026-8342-33dff1e27005.PNG)
